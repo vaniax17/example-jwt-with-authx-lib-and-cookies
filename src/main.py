@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends
 from uvicorn import run
 from src.database.workwithdb import check_user_in_db, check_correctly_password, create_user, create_db_and_tables
 from auth.auth import create_jwt_token
+from asyncio import run as asyncio_run
 app = FastAPI()
 
 
@@ -25,3 +26,4 @@ async def login_to_app_endpoint(username: str, password: str):
 
 if __name__ == "__main__":
     run(app, host="0.0.0.0", port=8000)
+    asyncio_run(create_db_and_tables())
