@@ -1,4 +1,7 @@
+from urllib import request
+
 from authx import RequestToken
+from authx.types import TokenLocation
 from fastapi import APIRouter, HTTPException, Response, Depends, Request, status
 from src.database.workwithdb import check_user_in_db, check_correctly_password, create_user
 from src.user.auth.auth import create_jwt_token, decode_jwt_token
@@ -9,6 +12,7 @@ router = APIRouter(prefix="/user", tags=["user"])
 async def create_user_endpoint(username: str, password: str, email: str):
     await create_user(username, password, email)
     return {"success": True, "message": "create User success"}
+
 @router.get("/login")
 async def login_to_app_endpoint(username: str, password: str, response: Response):
     checker = await check_user_in_db(username)
@@ -23,15 +27,13 @@ async def login_to_app_endpoint(username: str, password: str, response: Response
     else:
         raise HTTPException(status_code=401, detail="Invalid username or password")
 
-async def get_token_from_cookie(request: Request) -> str:
-    token = request.cookies.get("access_token")
-    if not token:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Access token missing from cookies"
-        )
-    return token
 
 @router.get("/protected")
-async def protected_endpoint(token: str = Depends(get_token_from_cookie)):
-    return {"username": decode_jwt_token(token)}
+async def protected_endpoint(request: Request):
+    try:
+        username = await decode_jwt_token(request)
+        return {"success": True, "message": "protected endpoint", "username": username}
+    except Exception as e:
+        return HTTPException(status_code=401, detail=f"Invalid token or {e}")
+
+
