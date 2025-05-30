@@ -4,7 +4,7 @@ from authx import RequestToken
 from authx.types import TokenLocation
 from fastapi import APIRouter, HTTPException, Response, Depends, Request, status
 from src.database.workwithdb import check_user_in_db, check_correctly_password, create_user
-from src.user.auth.auth import create_jwt_token, decode_jwt_token
+from src.user.auth.auth import create_jwt_token, decode_jwt_token_in_get_request
 
 router = APIRouter(prefix="/user", tags=["user"])
 
@@ -30,7 +30,7 @@ async def login_to_app_endpoint(username: str, password: str, response: Response
 @router.get("/protected")
 async def protected_endpoint(request: Request):
     try:
-        username = await decode_jwt_token(request)
+        username = await decode_jwt_token_in_get_request(request)
         return {"success": True, "message": "protected endpoint", "username": username}
     except Exception as e:
         return HTTPException(status_code=401, detail=f"Invalid token or {e}")

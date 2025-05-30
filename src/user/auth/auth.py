@@ -32,7 +32,7 @@ def create_jwt_token(username: str, response: Response) -> dict:
     authx.set_refresh_cookies(refresh_token, response)
     return {"token": token, "refresh_token": refresh_token}
 
-async def decode_jwt_token(request: Request) -> str:
+async def decode_jwt_token_in_get_request(request: Request) -> str:
     verify = await authx.get_access_token_from_request(request)
-    payload = authx.verify_token(verify)
+    payload = authx.verify_token(verify, verify_csrf=False)
     return payload.sub
