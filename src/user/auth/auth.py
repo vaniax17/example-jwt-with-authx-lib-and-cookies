@@ -36,3 +36,10 @@ async def decode_jwt_token_in_get_request(request: Request) -> str:
     verify = await authx.get_access_token_from_request(request)
     payload = authx.verify_token(verify, verify_csrf=False)
     return payload.sub
+
+def logout_of_account(response: Response):
+    try:
+        authx.unset_cookies(response)
+        return {"success": True, "message": "logout success"}
+    except Exception as e:
+        return {"success": False, "message": f"check this {e}"}
