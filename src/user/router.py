@@ -19,9 +19,8 @@ async def login_to_app_endpoint(username: str, password: str, response: Response
     if checker:
         password_check = await check_correctly_password(username, password)
         if password_check:
-            token = create_jwt_token(username=username)
-            response.set_cookie(key="access_token", value=token, httponly=True)
-            return {"success": True, "access_token": token, "message": "login success"}
+            token = create_jwt_token(username=username, response=response)
+            return {"success": True, "access_token": token.get("token"), "refresh_token": token.get("refresh_token"), "message": "login success"}
         else:
             raise HTTPException(status_code=401, detail="Invalid username or password")
     else:
