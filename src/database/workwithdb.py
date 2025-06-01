@@ -16,7 +16,7 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(nullable=False)
     email: Mapped[str] = mapped_column(nullable=False)
 
-async def check_user_and_email_in_db(username: str, email: str) -> bool:
+async def check_user_and_email_in_db(username: str, email: str | None) -> bool:
     async with get_db() as db:
         ps_username = await db.execute(select(User).where(User.username == username))
         result_username = ps_username.scalar_one_or_none()
