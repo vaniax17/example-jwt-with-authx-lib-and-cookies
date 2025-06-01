@@ -3,6 +3,7 @@ from sqlalchemy import select
 
 from src.database.db import Base, get_db, engine
 from src.utils import security
+from src.user.models.schemas import UserModel
 
 async def create_db_and_tables():
     async with engine.begin() as conn:
@@ -26,7 +27,12 @@ async def check_user_and_email_in_db(username: str, email: str) -> bool:
         else:
             return False
 
-async def create_user(username: str, password: str, email: str):
+async def create_user(username: str, password: str, email):
+    try:
+        UserModel(username=username, password=password, email=email)
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+
     if await check_user_and_email_in_db(username, email):
         return {"success": False, "message": "User or email already exists"}
     else:
