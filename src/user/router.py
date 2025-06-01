@@ -1,8 +1,5 @@
-from urllib import request
 
-from authx import RequestToken
-from authx.types import TokenLocation
-from fastapi import APIRouter, HTTPException, Response, Depends, Request, status
+from fastapi import APIRouter, HTTPException, Response, Request
 from src.database.workwithdb import check_user_in_db, check_correctly_password, create_user
 from src.user.auth.auth import create_jwt_token, decode_jwt_token_in_get_request, logout_of_account
 
@@ -10,8 +7,7 @@ router = APIRouter(prefix="/user", tags=["user"])
 
 @router.post("/create_user")
 async def create_user_endpoint(username: str, password: str, email: str):
-    await create_user(username, password, email)
-    return {"success": True, "message": "create User success"}
+    return await create_user(username, password, email)
 
 @router.get("/login")
 async def login_to_app_endpoint(username: str, password: str, response: Response):
@@ -28,8 +24,7 @@ async def login_to_app_endpoint(username: str, password: str, response: Response
 
 @router.delete("/logout")
 def logout_endpoint(response: Response):
-    logout_of_account(response)
-    return {"success": True, "message": "logout success"}
+    return logout_of_account(response)
 
 @router.get("/protected")
 async def protected_endpoint(request: Request):

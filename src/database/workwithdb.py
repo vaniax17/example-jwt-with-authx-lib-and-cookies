@@ -15,17 +15,6 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(nullable=False)
     email: Mapped[str] = mapped_column(nullable=False)
 
-
-async def create_user(username: str, password: str, email: str):
-    hashed_password = await security.hash_password(password)
-    async with get_db() as db:
-        try:
-            db.add(User(username=username, hashed_password=hashed_password, email=email))
-            await db.commit()
-            return {"success": True, "message": "User added"}
-        except Exception as e:
-            return {"success": False, "message": str(e)}
-
 async def check_user_in_db(username: str) -> bool:
     async with get_db() as db:
         try:
@@ -37,6 +26,20 @@ async def check_user_in_db(username: str) -> bool:
                 return False
         except Exception as e:
             return {"success": False, "message": str(e)}
+
+async def create_user(username: str, password: str, email: str):
+    if await check_user_in_db(username):
+        return {"success": False, "message": "User already exists"}
+    else:
+        hashed_password = await security.hash_password(password)
+        async with get_db() as db:
+            try:
+                db.add(User(username=username, hashed_password=hashed_password, email=email))
+                await db.commit()
+                return {"success": True, "message": "User added"}
+            except Exception as e:
+                return {"success": False, "message": str(e)}
+
 
 async def check_correctly_password(username: str, password: str) -> bool:
     async with get_db() as db:

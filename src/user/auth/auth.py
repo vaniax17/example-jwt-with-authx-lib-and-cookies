@@ -1,9 +1,7 @@
-from typing import Any, Coroutine
 
-from authx import AuthX, AuthXConfig, RequestToken
+from authx import AuthX, AuthXConfig
 from os import getenv
 
-from authx.types import TokenLocation
 from dotenv import load_dotenv
 from src.user.router import Request
 from src.user.router import Response
