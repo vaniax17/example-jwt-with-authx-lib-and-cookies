@@ -45,9 +45,9 @@ _Getting information about a JWT token localhost:8000/user/protected_
 
 ```json
 {
-  ‘success’: true,
-  ‘message’: ‘protected endpoint’,
-  ‘username’: ‘testuser’
+  "success": true,
+  "message": "protected endpoint",
+  "username": "testuser"
 }
 ```
 
@@ -59,16 +59,16 @@ _Deleting authorised user data localhost:8000/user/remove_my_info (From cookies)
 
 ```json
 {
-  ‘success’: true,
-  ‘message’: ‘User removed’,
+  "success": true,
+  "message": "User removed"
 }
 ```
 
 _Logging out a user localhost:8000/user/logout_
 ```json
 {
-  ‘success’: true,
-  ‘message’: ‘logout success’
+  "success": true,
+  "message": "logout success"
 }
 ```
 ---
@@ -79,8 +79,8 @@ _Creating a new user / login localhost:8000/user/create_user_
 
 ```json
 {
-  ‘success’: true,
-  ‘message’: ‘User added’
+  "success": true,
+  "message": "User added"
 }
 ```
 
