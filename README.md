@@ -1,5 +1,7 @@
 # 🚀 FastAPI with AuthX for JWT
 
+[Change lang to EN](README_en.md)
+
 ✅ Реализация FastAPI-приложения с использованием:
 
 - `FastAPI`
