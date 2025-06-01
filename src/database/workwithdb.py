@@ -3,7 +3,7 @@ from sqlalchemy import select
 
 from src.database.db import Base, get_db, engine
 from src.utils import security
-from src.user.models.schemas import UserModel
+from src.user.models.user import UserModel
 
 async def create_db_and_tables():
     async with engine.begin() as conn:
