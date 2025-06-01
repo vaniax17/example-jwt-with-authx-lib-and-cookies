@@ -16,8 +16,14 @@ config = AuthXConfig(
     JWT_TOKEN_LOCATION=["cookies"],
     JWT_COOKIE_CSRF_PROTECT=True,
     JWT_CSRF_IN_COOKIES=True,
+    JWT_CSRF_METHODS=["POST", "PUT", "PATCH", "DELETE"],
     JWT_ACCESS_CSRF_COOKIE_NAME="csrf_access_token",
     JWT_REFRESH_CSRF_COOKIE_NAME="csrf_refresh_token",
+    JWT_ACCESS_CSRF_HEADER_NAME="X-CSRF-TOKEN",
+    JWT_REFRESH_CSRF_HEADER_NAME="X-CSRF-REFRESH-TOKEN",
+    JWT_COOKIE_SAMESITE="lax",
+    JWT_COOKIE_DOMAIN="localhost",
+    JWT_CSRF_CHECK_FORM=True,
 )
 
 
@@ -33,6 +39,11 @@ def create_jwt_token(username: str, response: Response) -> dict:
 async def decode_jwt_token_in_get_request(request: Request) -> str:
     verify = await authx.get_access_token_from_request(request)
     payload = authx.verify_token(verify, verify_csrf=False)
+    return payload.sub
+
+async def decode_jwt_token_in_another_requests(request: Request) -> str:
+    verify = await authx.get_access_token_from_request(request)
+    payload = authx.verify_token(verify)
     return payload.sub
 
 def logout_of_account(response: Response):

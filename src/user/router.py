@@ -1,7 +1,8 @@
 
 from fastapi import APIRouter, HTTPException, Response, Request
-from src.database.workwithdb import check_user_and_email_in_db, check_correctly_password, create_user
-from src.user.auth.auth import create_jwt_token, decode_jwt_token_in_get_request, logout_of_account
+from src.database.workwithdb import check_user_and_email_in_db, check_correctly_password, create_user, remove_user
+from src.user.auth.auth import create_jwt_token, decode_jwt_token_in_get_request, logout_of_account, \
+    decode_jwt_token_in_another_requests
 
 router = APIRouter(prefix="/user", tags=["user"])
 
@@ -21,6 +22,14 @@ async def login_to_app_endpoint(username: str, password: str, response: Response
             raise HTTPException(status_code=401, detail="Invalid username or password")
     else:
         raise HTTPException(status_code=401, detail="Invalid username or password")
+
+@router.delete("/remove_my_info")
+async def remove_user_info_endpoint(request: Request):
+    try:
+        username = await decode_jwt_token_in_another_requests(request)
+        return await remove_user(username)
+    except Exception as e:
+        return HTTPException(status_code=401, detail=f"Invalid token or {e}")
 
 @router.delete("/logout")
 def logout_endpoint(response: Response):

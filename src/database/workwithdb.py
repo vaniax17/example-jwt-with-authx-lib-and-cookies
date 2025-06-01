@@ -55,3 +55,17 @@ async def check_correctly_password(username: str, password: str) -> bool:
             return True
         else:
             return False
+
+async def remove_user(username: str):
+    if not await check_user_and_email_in_db(username, None):
+        return {"success": False, "message": "User not found"}
+    else:
+        async with get_db() as db:
+            try:
+                ps = await db.execute(select(User).where(User.username == username))
+                user = ps.scalar_one_or_none()
+                await db.delete(user)
+                await db.commit()
+                return {"success": True, "message": "User removed"}
+            except Exception as e:
+                return {"success": False, "message": str(e)}
