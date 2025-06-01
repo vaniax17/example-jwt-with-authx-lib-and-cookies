@@ -1,6 +1,6 @@
 
 from fastapi import APIRouter, HTTPException, Response, Request
-from src.database.workwithdb import check_user_in_db, check_correctly_password, create_user
+from src.database.workwithdb import check_user_and_email_in_db, check_correctly_password, create_user
 from src.user.auth.auth import create_jwt_token, decode_jwt_token_in_get_request, logout_of_account
 
 router = APIRouter(prefix="/user", tags=["user"])
@@ -11,7 +11,7 @@ async def create_user_endpoint(username: str, password: str, email: str):
 
 @router.get("/login")
 async def login_to_app_endpoint(username: str, password: str, response: Response):
-    checker = await check_user_in_db(username)
+    checker = await check_user_and_email_in_db(username)
     if checker:
         password_check = await check_correctly_password(username, password)
         if password_check:

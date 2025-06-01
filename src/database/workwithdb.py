@@ -15,21 +15,20 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(nullable=False)
     email: Mapped[str] = mapped_column(nullable=False)
 
-async def check_user_in_db(username: str) -> bool:
+async def check_user_and_email_in_db(username: str, email: str) -> bool:
     async with get_db() as db:
-        try:
-            ps = await db.execute(select(User).where(User.username == username))
-            result = ps.scalar_one_or_none()
-            if result is not None:
-                return True
-            else:
-                return False
-        except Exception as e:
-            return {"success": False, "message": str(e)}
+        ps_username = await db.execute(select(User).where(User.username == username))
+        result_username = ps_username.scalar_one_or_none()
+        ps_email = await db.execute(select(User).where(User.email == email))
+        result_email = ps_email.scalar_one_or_none()
+        if result_username is not None or result_email is not None:
+            return True
+        else:
+            return False
 
 async def create_user(username: str, password: str, email: str):
-    if await check_user_in_db(username):
-        return {"success": False, "message": "User already exists"}
+    if await check_user_and_email_in_db(username, email):
+        return {"success": False, "message": "User or email already exists"}
     else:
         hashed_password = await security.hash_password(password)
         async with get_db() as db:
